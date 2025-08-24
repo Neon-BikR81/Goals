@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Goals — Focus & Finish</title>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<meta name="theme-color" content="#111827">
+<style>
+  :root{
+    --bg: #0b0f14;           /* deep slate */
+    --panel: #111827;        /* solid charcoal */
+    --panel-2:#0f172a;       /* navy-ish */
+    --muted:#8b9bb7;         /* soft steel */
+    --text:#f8fafc;          /* almost white */
+    --accent:#6ee7b7;        /* mint */
+    --accent-2:#7c3aed;      /* purple pop */
+    --accent-3:#22d3ee;      /* cyan */
+    --danger:#ef4444;
+    --warning:#f59e0b;
+    --ok:#10b981;
+    --card:#0b1220;
+    --ring: color-mix(in oklab, var(--accent) 25%, transparent);
+    --rounded:14px;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Inter", "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji";
+    background: radial-gradient(1200px 600px at 20% -10%, rgba(124,58,237,.15), transparent 60%),
+                radial-gradient(900px 500px at 120% 0%, rgba(34,211,238,.10), transparent 50%),
+                var(--bg);
+    color:var(--text);
+  }
+  /* Topbar */
+  header{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(140%) blur(12px);
+    background:linear-gradient(180deg, rgba(17,24,39,.9), rgba(17,24,39,.6));
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .topbar{
+    display:flex; gap:12px; align-items:center; justify-content:space-between;
+    padding:14px clamp(14px, 4vw, 28px);
+  }
+  .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
+  .brand .logo{
+    width:36px; height:36px; border-radius:10px;
+    background: conic-gradient(from 210deg, var(--accent), var(--accent-3), var(--accent-2));
+    box-shadow: 0 6px 16px rgba(124,58,237,.35), inset 0 0 20px rgba(255,255,255,.08);
+    display:grid; place-items:center; color:#0b0f14;
+  }
+  .top-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .chip{
+    display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06);
+    cursor:pointer; user-select:none;
+    transition:transform .12s ease, background .2s ease, border-color .2s ease;
+  }
+  .chip:hover{transform:translateY(-1px); border-color: rgba(255,255,255,.15)}
+  .chip i{opacity:.9}
+  .pill{
+    padding:10px 14px; border-radius:12px; background:var(--panel);
+    border:1px solid rgba(255,255,255,.06);
+  }
+
+  /* Layout */
+  .wrap{display:grid; grid-template-columns: 280px 1fr; gap:16px; padding:16px; max-width:1400px; margin-inline:auto}
+  @media (max-width: 980px){
+    .wrap{grid-template-columns: 1fr}
+    aside{order:2}
+    main{order:1}
+  }
+  aside{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--rounded);
+    padding:14px;
+    box-shadow:var(--shadow);
+  }
+  .section-title{display:flex; align-items:center; justify-content:space-between; margin:4px 2px 12px; opacity:.9}
+  .section-title h3{margin:0; font-size:14px; letter-spacing:.7px; text-transform:uppercase; color:var(--muted)}
+  .link{font-size:12px; color:var(--accent); cursor:pointer}
+
+  .stats{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+  .stat{
+    background:linear-gradient(180deg, rgba(34,197,94,.08), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:12px; padding:12px;
+  }
+  .stat h2{margin:0 0 6px; font-size:22px}
+  .stat small{color:var(--muted)}
+  .rad{
+    position:relative; height:8px; background:#141b29; border-radius:999px; overflow:hidden; margin-top:10px
+  }
+  .rad > span{
+    position:absolute; inset:0 100% 0 0; background:linear-gradient(90deg, var(--accent), var(--accent-3));
+    width:0%;
+  }
+
+  .filters{display:grid; gap:8px; margin-top:14px}
+  .input, select, textarea{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.06);
+    background:#0c1422; color:var(--text); outline:none;
+  }
+  .row{display:flex; gap:8px}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px; justify-content:center;
+    padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.06);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    color:var(--text); cursor:pointer; user-select:none; transition:transform .12s ease, border-color .2s ease;
+  }
+  .btn:hover{transform:translateY(-1px); border-color: rgba(255,255,255,.12)}
+  .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 24%, transparent), rgba(255,255,255,.03)); border-color: var(--ring)}
+  .btn.warn{background:linear-gradient(180deg, color-mix(in oklab, var(--warning) 24%, transparent), rgba(255,255,255,.03))}
+  .btn.danger{background:linear-gradient(180deg, color-mix(in oklab, var(--danger) 24%, transparent), rgba(255,255,255,.03))}
+  .btn.ghost{background:transparent}
+
+  main{
+    display:grid; gap:16px;
+  }
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--rounded);
+    padding:14px;
+    box-shadow:var(--shadow);
+  }
+  .grid-boards{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px}
+  @media (max-width: 1100px){ .grid-boards{grid-template-columns: 1fr 1fr} }
+  @media (max-width: 760px){ .grid-boards{grid-template-columns: 1fr} }
+
+  .board{border-radius:12px; background: linear-gradient(180deg, rgba(124,58,237,.06), rgba(255,255,255,.015)); padding:10px; border:1px solid rgba(255,255,255,.06)}
+  .board h4{margin:6px 6px 10px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); font-size:12px}
+  .dropzone{display:grid; gap:10px; min-height:120px}
+  .ghost{opacity:.5}
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px; padding:10px; display:grid; gap:8px;
+    cursor:grab;
+  }
+  .card:active{cursor:grabbing}
+  .card-header{display:flex; align-items:center; gap:8px; justify-content:space-between}
+  .badge{
+    font-size:11px; padding:4px 8px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.1);
+    background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+  }
+  .title{font-weight:700}
+  .desc{font-size:13px; color:var(--muted)}
+  .progress{height:6px; background:#1b2436; border-radius:999px; overflow:hidden}
+  .progress > span{display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent-2))}
+  .meta{display:flex; gap:8px; align-items:center; color:var(--muted); font-size:12px; flex-wrap:wrap}
+  .tags{display:flex; gap:6px; flex-wrap:wrap}
+  .tag{font-size:11px; padding:4px 8px; border-radius:8px; background:#0f1627; border:1px solid rgba(255,255,255,.06)}
+  .actions{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
+  .actions .btn{padding:8px 10px; font-size:13px}
+
+  .tasks{display:grid; gap:6px}
+  .task{
+    display:flex; gap:8px; align-items:center; padding:8px; border-radius:10px; background:#0b1220; border:1px solid rgba(255,255,255,.06)
+  }
+  .task input[type="checkbox"]{width:18px; height:18px}
+  .task.done{opacity:.65; text-decoration:line-through}
+  .add-task{display:flex; gap:6px}
+  .mini{font-size:12px; padding:8px 10px}
+
+  .empty{
+    text-align:center; color:var(--muted); padding:18px; border:1px dashed rgba(255,255,255,.08); border-radius:12px;
+  }
+
+  /* Dialog / modal */
+  dialog{
+    width:min(740px, 92vw);
+    border:none; border-radius:16px; padding:0; overflow:hidden; color:var(--text);
+    background:linear-gradient(180deg, rgba(17,24,39,.98), rgba(12,18,32,.98));
+    box-shadow: 0 20px 55px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.05);
+  }
+  dialog::backdrop{background:rgba(5,8,14,.6); backdrop-filter: blur(4px)}
+  .modal-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06)}
+  .modal-body{padding:14px 16px; display:grid; gap:12px}
+  .grid{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+  @media (max-width:700px){ .grid{grid-template-columns:1fr} }
+  .hint{font-size:12px; color:var(--muted)}
+
+  /* Toast */
+  .toast{
+    position:fixed; bottom:18px; left:50%; transform:translateX(-50%) translateY(30px); opacity:0;
+    padding:10px 14px; border-radius:12px; background:#0e1729; border:1px solid rgba(255,255,255,.12);
+    transition: .25s ease; display:flex; gap:10px; align-items:center; box-shadow:var(--shadow); z-index:60;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0); opacity:1}
+
+  /* Badges/Achievements */
+  .achievements{display:flex; gap:10px; flex-wrap:wrap}
+  .achievement{
+    display:flex; gap:8px; align-items:center; padding:8px 10px; border-radius:10px;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06); font-size:13px;
+  }
+  .achievement.locked{opacity:.5; filter:grayscale(.4)}
+  .spark{position:fixed; inset:0; pointer-events:none}
+  canvas#confetti{position:fixed; inset:0; pointer-events:none}
+</style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"><i class="fa-solid fa-bullseye"></i></div>
+        <div>
+          <div style="font-size:15px; opacity:.85; letter-spacing:.6px">GOALS</div>
+          <small style="color:var(--muted)">Focus & Finish</small>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="chip" id="btn-new"><i class="fa-solid fa-plus"></i> New Goal</div>
+        <div class="chip" id="btn-smart"><i class="fa-solid fa-wand-magic-sparkles"></i> SMART wizard</div>
+        <div class="chip" id="btn-export"><i class="fa-solid fa-file-export"></i> Export</div>
+        <label class="chip" title="Import JSON">
+          <i class="fa-solid fa-file-import"></i> Import
+          <input id="import-file" type="file" accept="application/json" hidden/>
+        </label>
+        <div class="chip" id="btn-theme"><i class="fa-solid fa-palette"></i> Theme</div>
+        <div class="pill">
+          <i class="fa-regular fa-calendar"></i> <span id="today"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <aside>
+      <div class="section-title">
+        <h3>Dashboard</h3>
+        <div class="link" id="clear-data"><i class="fa-solid fa-trash"></i> reset</div>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <small>Active Goals</small>
+          <h2 id="stat-goals">0</h2>
+          <div class="rad"><span id="rad-goals"></span></div>
+        </div>
+        <div class="stat">
+          <small>Tasks Today</small>
+          <h2 id="stat-today">0</h2>
+          <div class="rad"><span id="rad-today"></span></div>
+        </div>
+        <div class="stat">
+          <small>Total Progress</small>
+          <h2 id="stat-progress">0%</h2>
+          <div class="rad"><span id="rad-progress"></span></div>
+        </div>
+        <div class="stat">
+          <small>Daily Streak</small>
+          <h2 id="stat-streak">0 🔥</h2>
+          <div class="rad"><span id="rad-streak"></span></div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px">
+        <h3>Find & Filter</h3>
+        <div class="link" id="reset-filters">clear</div>
+      </div>
+      <div class="filters">
+        <input id="q" class="input" placeholder="Search goals or tasks… (⌘/Ctrl + K)">
+        <div class="row">
+          <select id="f-category">
+            <option value="">All categories</option>
+          </select>
+          <select id="f-priority">
+            <option value="">Any priority</option>
+            <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+          </select>
+        </div>
+        <div class="row">
+          <select id="f-status">
+            <option value="">Any status</option>
+            <option value="backlog">Backlog</option>
+            <option value="doing">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+          <select id="f-sort">
+            <option value="priority">Sort: Priority</option>
+            <option value="deadline">Sort: Deadline</option>
+            <option value="progress">Sort: Progress</option>
+            <option value="created">Sort: Created</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px">
+        <h3>Achievements</h3>
+        <span class="link" id="btn-badges">view all</span>
+      </div>
+      <div class="achievements" id="achievements"></div>
+    </aside>
+
+    <main>
+      <div class="panel">
+        <div class="section-title">
+          <h3>Kanban</h3>
+          <div class="link" id="btn-compact"><i class="fa-solid fa-minimize"></i> compact</div>
+        </div>
+        <div class="grid-boards">
+          <div class="board">
+            <h4><i class="fa-regular fa-lightbulb"></i> Backlog</h4>
+            <div class="dropzone" id="col-backlog"></div>
+          </div>
+          <div class="board">
+            <h4><i class="fa-solid fa-person-running"></i> In Progress</h4>
+            <div class="dropzone" id="col-doing"></div>
+          </div>
+          <div class="board">
+            <h4><i class="fa-regular fa-circle-check"></i> Done</h4>
+            <div class="dropzone" id="col-done"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <h3>All Goals</h3>
+          <div class="link" id="expand-all"><i class="fa-solid fa-chevrons-down"></i> expand</div>
+        </div>
+        <div id="list"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Goal Modal -->
+  <dialog id="goal-modal">
+    <form method="dialog">
+      <div class="modal-head">
+        <strong><i class="fa-solid fa-bullseye"></i> <span id="modal-title">New Goal</span></strong>
+        <div>
+          <button class="btn ghost" value="cancel"><i class="fa-regular fa-circle-xmark"></i> Close</button>
+          <button id="save-goal" class="btn primary" value="default"><i class="fa-regular fa-floppy-disk"></i> Save</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="grid">
+          <div>
+            <label>Title</label>
+            <input id="g-title" class="input" required placeholder="e.g., Finish Semester Project">
+          </div>
+          <div>
+            <label>Category</label>
+            <input id="g-category" class="input" list="d-cats" placeholder="e.g., School, Fitness, Finance">
+            <datalist id="d-cats"></datalist>
+          </div>
+          <div>
+            <label>Priority</label>
+            <select id="g-priority">
+              <option>Low</option><option>Medium</option><option selected>High</option><option>Critical</option>
+            </select>
+          </div>
+          <div>
+            <label>Deadline</label>
+            <input id="g-deadline" type="date" class="input">
+          </div>
+          <div>
+            <label>Color</label>
+            <input id="g-color" type="color" class="input" value="#7c3aed">
+          </div>
+          <div>
+            <label>Estimate (hours)</label>
+            <input id="g-estimate" type="number" min="0" step="0.5" class="input" placeholder="e.g., 12">
+          </div>
+        </div>
+        <div>
+          <label>Description</label>
+          <textarea id="g-desc" rows="3" placeholder="What’s the outcome? Why it matters?"></textarea>
+        </div>
+        <div class="hint"><i class="fa-regular fa-lightbulb"></i> Tip: Break it into small tasks after saving.</div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- SMART Modal -->
+  <dialog id="smart-modal">
+    <form method="dialog">
+      <div class="modal-head">
+        <strong><i class="fa-solid fa-wand-magic-sparkles"></i> SMART Goal Wizard</strong>
+        <div>
+          <button class="btn ghost" value="cancel">Close</button>
+          <button id="smart-create" class="btn primary" value="default"><i class="fa-regular fa-circle-check"></i> Create</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="grid">
+          <div>
+            <label>Specific — What exactly?</label>
+            <input id="s-specific" class="input" placeholder="e.g., Run a sub-22min 5k">
+          </div>
+          <div>
+            <label>Measurable — How measured?</label>
+            <input id="s-measure" class="input" placeholder="Time, reps, score, $">
+          </div>
+          <div>
+            <label>Achievable — Plan outline</label>
+            <input id="s-ach" class="input" placeholder="Intervals Tu/Th + long run Sun">
+          </div>
+          <div>
+            <label>Relevant — Why now?</label>
+            <input id="s-rel" class="input" placeholder="Qualify for club race">
+          </div>
+          <div>
+            <label>Time-bound — Deadline</label>
+            <input id="s-time" type="date" class="input">
+          </div>
+          <div>
+            <label>Category</label>
+            <input id="s-cat" class="input" placeholder="Fitness / Study / Money">
+          </div>
+        </div>
+        <div>
+          <label>Auto-generate tasks?</label>
+          <select id="s-autotasks">
+            <option value="none">No</option>
+            <option value="light">Yes — Light</option>
+            <option value="coach">Yes — Coach Mode</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Badges Modal -->
+  <dialog id="badges-modal">
+    <form method="dialog">
+      <div class="modal-head">
+        <strong><i class="fa-solid fa-trophy"></i> Achievements</strong>
+        <div><button class="btn ghost" value="cancel">Close</button></div>
+      </div>
+      <div class="modal-body" id="badges-body"></div>
+    </form>
+  </dialog>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"><i class="fa-solid fa-bell"></i><span id="toast-msg">Saved</span></div>
+
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+  const todayStr = () => new Date().toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
+  $("#today").textContent = todayStr();
+
+  /* ---------- Persistence ---------- */
+  const KEY = "goals.v1";
+  const STATE = {
+    goals: [],         // array of goal objects
+    streak: { lastDay: null, count: 0 },
+    compact: false
+  };
+  const load = () => {
+    try{
+      const raw = localStorage.getItem(KEY);
+      if(!raw) return save();
+      const data = JSON.parse(raw);
+      Object.assign(STATE, data);
+    }catch(e){ console.warn(e) }
+  };
+  const save = () => {
+    localStorage.setItem(KEY, JSON.stringify(STATE));
+    updateStats(); render();
+  };
+  const resetAll = () => {
+    if(!confirm("Reset all data?")) return;
+    localStorage.removeItem(KEY);
+    STATE.goals = []; STATE.streak = {lastDay:null, count:0}; STATE.compact=false;
+    save(); toast("Reset complete");
+  };
+
+  /* ---------- Utils ---------- */
+  const uid = () => Math.random().toString(36).slice(2,9);
+  const clamp = (n, min=0, max=100) => Math.max(min, Math.min(max, n));
+  const daysLeft = (dateStr) => {
+    if(!dateStr) return "";
+    const d = new Date(dateStr); const t = new Date();
+    const diff = Math.ceil((d - new Date(t.getFullYear(), t.getMonth(), t.getDate())) / (1000*60*60*24));
+    return diff;
+  };
+  const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString() : "No deadline";
+
+  const toast = (msg) => {
+    const el = $("#toast"); $("#toast-msg").textContent = msg;
+    el.classList.add("show"); setTimeout(()=> el.classList.remove("show"), 1600);
+  };
+
+  /* ---------- Confetti (tiny) ---------- */
+  const confetti = (()=> {
+    const canvas = $("#confetti");
+    const ctx = canvas.getContext("2d");
+    let W, H, pieces=[];
+    const resize = () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight; };
+    addEventListener("resize", resize); resize();
+    function burst(x=W/2, y=H/2, n=120){
+      pieces = Array.from({length:n}, ()=>({
+        x, y,
+        vx:(Math.random()-0.5)*8, vy:(Math.random()-1)*7 - 2,
+        g: .15 + Math.random()*0.2,
+        s: 2+Math.random()*3,
+        r: Math.random()*Math.PI,
+        col: ["#6ee7b7","#22d3ee","#7c3aed","#fde047","#f472b6"][Math.floor(Math.random()*5)],
+        life: 60 + Math.random()*40
+      }));
+      animate();
+    }
+    let raf=null;
+    function animate(){
+      cancelAnimationFrame(raf);
+      let frames=0;
+      (function loop(){
+        raf = requestAnimationFrame(loop);
+        ctx.clearRect(0,0,W,H);
+        pieces.forEach(p=>{
+          p.vy += p.g;
+          p.x += p.vx; p.y += p.vy; p.r += .1;
+          p.life--; ctx.save();
+          ctx.translate(p.x,p.y); ctx.rotate(p.r);
+          ctx.fillStyle = p.col; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s);
+          ctx.restore();
+        });
+        pieces = pieces.filter(p=> p.life>0 && p.y < H+20);
+        if(++frames>200 || pieces.length===0) cancelAnimationFrame(raf);
+      })();
+    }
+    return { burst };
+  })();
+
+  /* ---------- Data Shapes ----------
+    goal = { id, title, category, priority, deadline, color, desc,
+             status: 'backlog'|'doing'|'done', createdAt, estimate,
+             tasks:[ {id,title,done} ], progress (0..100) }
+  ----------------------------------- */
+
+  /* ---------- Render ---------- */
+  function render(){
+    // Fill filters category list
+    const cats = [...new Set(STATE.goals.map(g=>g.category).filter(Boolean))];
+    $("#f-category").innerHTML = '<option value="">All categories</option>' + cats.map(c=>`<option>${escapeHtml(c)}</option>`).join("");
+    $("#d-cats").innerHTML = cats.map(c=>`<option value="${escapeHtml(c)}">`).join("");
+
+    // Boards
+    const filters = readFilters();
+    const {backlog, doing, done} = splitByStatus(applyFilters(STATE.goals, filters));
+    renderCol("#col-backlog", backlog);
+    renderCol("#col-doing", doing);
+    renderCol("#col-done", done);
+
+    // List
+    const list = $("#list");
+    const items = applyFilters(STATE.goals, filters);
+    if(items.length===0){
+      list.innerHTML = `<div class="empty">
+        <p>No goals yet. Hit <strong>New Goal</strong> or try the <strong>SMART wizard</strong>.</p>
+      </div>`;
+    } else {
+      list.innerHTML = items.map(g=> cardHTML(g, {detailed:true})).join("");
+      wireCardActions();
+    }
+  }
+
+  function renderCol(sel, items){
+    const el = $(sel);
+    el.innerHTML = items.map(g=> cardHTML(g, {compact: STATE.compact})).join("");
+    wireCardActions();
+    // Enable drop
+    el.ondragover = e => { e.preventDefault(); el.classList.add("ghost") };
+    el.ondragleave = () => el.classList.remove("ghost");
+    el.ondrop = e => {
+      e.preventDefault(); el.classList.remove("ghost");
+      const id = e.dataTransfer.getData("text/plain");
+      const goal = STATE.goals.find(g=>g.id===id);
+      if(!goal) return;
+      const newStatus = sel.includes("backlog") ? "backlog" : sel.includes("doing") ? "doing":"done";
+      goal.status = newStatus;
+      if(newStatus==="done" && goal.progress<100){ goal.progress = 100; markStreak(); unlock("Closer"); confetti.burst() }
+      save();
+    };
+  }
+
+  function cardHTML(g, opts={}){
+    const tasksDone = g.tasks.filter(t=>t.done).length;
+    const pct = g.tasks.length? Math.round(tasksDone / g.tasks.length * 100) : g.progress||0;
+    const left = daysLeft(g.deadline);
+    const dueBadge = g.deadline ? `<span class="badge" title="${formatDate(g.deadline)}">
+      <i class="fa-regular fa-clock"></i> ${left<0? "Overdue" : left===0? "Today" : left+"d"}
+    </span>` : "";
+    const priIcon = g.priority==="Critical" ? "fa-skull-crossbones"
+                    : g.priority==="High" ? "fa-angles-up"
+                    : g.priority==="Medium" ? "fa-minus" : "fa-arrow-down";
+    const statusIcon = g.status==="done" ? "fa-circle-check" : g.status==="doing" ? "fa-person-running" : "fa-lightbulb";
+    const base = `
+    <div class="card" draggable="true" data-id="${g.id}" style="border-color:${mix(g.color, 0.35)}; box-shadow: inset 0 0 0 1px ${mix(g.color,0.15)};">
+      <div class="card-header">
+        <div class="title"><i class="fa-solid ${statusIcon}" style="color:${g.color}"></i> ${escapeHtml(g.title)}</div>
+        <div class="tags">
+          <span class="badge" style="border-color:${mix(g.color,.4)}"><i class="fa-solid ${priIcon}"></i> ${g.priority}</span>
+          ${g.category? `<span class="badge"><i class="fa-solid fa-folder"></i> ${escapeHtml(g.category)}</span>`:""}
+          ${dueBadge}
+        </div>
+      </div>
+      ${g.desc? `<div class="desc">${escapeHtml(g.desc)}</div>`:``}
+      <div class="progress"><span style="width:${pct}%"></span></div>
+      <div class="meta">
+        <span><i class="fa-regular fa-square-check"></i> ${tasksDone}/${g.tasks.length} tasks</span>
+        ${g.estimate? `<span><i class="fa-regular fa-hourglass-half"></i> ~${g.estimate}h</span>`:""}
+        <span>|</span>
+        <span>${pct}%</span>
+      </div>
+      ${opts.compact? `` : tasksHTML(g)}
+      <div class="actions">
+        <button class="btn mini" data-act="addTask"><i class="fa-solid fa-plus"></i> Task</button>
+        <button class="btn mini" data-act="start"><i class="fa-solid fa-play"></i> Start</button>
+        <button class="btn mini" data-act="done"><i class="fa-regular fa-circle-check"></i> Done</button>
+        <button class="btn mini" data-act="edit"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
+        <button class="btn mini danger" data-act="delete"><i class="fa-regular fa-trash-can"></i></button>
+      </div>
+    </div>`;
+    if(opts.detailed) return base;
+    return base;
+  }
+
+  function tasksHTML(g){
+    const rows = g.tasks.map(t=>`
+      <div class="task ${t.done?'done':''}">
+        <input type="checkbox" data-act="toggleTask" data-g="${g.id}" data-t="${t.id}" ${t.done?'checked':''}>
+        <input class="input" data-act="renameTask" data-g="${g.id}" data-t="${t.id}" value="${escapeHtml(t.title)}">
+        <button class="btn mini" data-act="removeTask" data-g="${g.id}" data-t="${t.id}"><i class="fa-regular fa-xmark"></i></button>
+      </div>
+    `).join("");
+    return `
+      <div class="tasks" data-goal="${g.id}">
+        ${rows|| `<div class="hint">No tasks yet. Add one to get moving.</div>`}
+        <div class="add-task">
+          <input class="input" placeholder="Add task…" data-act="newTaskInput" data-g="${g.id}">
+          <button class="btn mini" data-act="addTaskNow" data-g="${g.id}"><i class="fa-solid fa-plus"></i> Add</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function wireCardActions(){
+    $$(".card").forEach(card=>{
+      card.ondragstart = e=> { e.dataTransfer.setData("text/plain", card.dataset.id); setTimeout(()=> card.classList.add('ghost'),0); };
+      card.ondragend = ()=> card.classList.remove('ghost');
+      card.querySelectorAll("[data-act]").forEach(btn=>{
+        btn.onclick = handleAction;
+      });
+      // inputs inside tasks need change listeners
+      card.querySelectorAll('input[type="checkbox"][data-act="toggleTask"]').forEach(cb=> cb.onchange = handleAction);
+      card.querySelectorAll('input[data-act="renameTask"]').forEach(inp=> inp.onchange = handleAction);
+      card.querySelectorAll('input[data-act="newTaskInput"]').forEach(inp=>{
+        inp.onkeydown = (e)=>{ if(e.key==="Enter"){ e.preventDefault(); addTaskNow(inp.dataset.g, inp.value); inp.value=""; } };
+      });
+    });
+  }
+
+  function handleAction(e){
+    const act = e.currentTarget.dataset.act;
+    const card = e.currentTarget.closest(".card");
+    const id = card?.dataset.id || e.currentTarget.dataset.g;
+    const goal = STATE.goals.find(g=>g.id===id);
+    if(!goal && !["addTaskNow","toggleTask","renameTask","removeTask"].includes(act)) return;
+
+    switch(act){
+      case "addTask":
+        promptTask(goal); break;
+      case "start":
+        goal.status="doing"; save(); toast("Let’s go!"); unlock("OnTheMove"); break;
+      case "done":
+        goal.status="done"; goal.progress=100;
+        goal.tasks.forEach(t=> t.done=true);
+        save(); toast("Completed!"); markStreak(); unlock("Closer"); confetti.burst(); break;
+      case "edit":
+        openGoalModal(goal); break;
+      case "delete":
+        if(confirm("Delete this goal?")){ STATE.goals = STATE.goals.filter(g=>g.id!==goal.id); save(); toast("Deleted"); }
+        break;
+      case "addTaskNow":
+        addTaskNow(e.currentTarget.dataset.g, e.currentTarget.previousElementSibling.value);
+        e.currentTarget.previousElementSibling.value = "";
+        break;
+      case "toggleTask": {
+        const gid = e.currentTarget.dataset.g, tid = e.currentTarget.dataset.t;
+        const gg = STATE.goals.find(g=>g.id===gid); const tt = gg.tasks.find(t=>t.id===tid);
+        tt.done = e.currentTarget.checked;
+        gg.progress = computeProgress(gg);
+        if(gg.progress===100){ gg.status='done'; markStreak(); unlock("Closer"); confetti.burst(); }
+        save(); maybeNudge();
+        break;
+      }
+      case "renameTask":{
+        const gid = e.currentTarget.dataset.g, tid = e.currentTarget.dataset.t;
+        const gg = STATE.goals.find(g=>g.id===gid); const tt = gg.tasks.find(t=>t.id===tid);
+        tt.title = e.currentTarget.value.trim() || tt.title;
+        save(); break;
+      }
+      case "removeTask":{
+        const gid = e.currentTarget.dataset.g, tid = e.currentTarget.dataset.t;
+        const gg = STATE.goals.find(g=>g.id===gid);
+        gg.tasks = gg.tasks.filter(t=>t.id!==tid);
+        gg.progress = computeProgress(gg);
+        save(); break;
+      }
+    }
+  }
+
+  function addTaskNow(goalId, title){
+    title = (title||"").trim();
+    if(!title) return;
+    const g = STATE.goals.find(x=>x.id===goalId);
+    g.tasks.push({id:uid(), title, done:false});
+    g.progress = computeProgress(g);
+    save(); toast("Task added");
+  }
+
+  function promptTask(goal){
+    const title = prompt("Task name?");
+    if(!title) return;
+    goal.tasks.push({id:uid(), title:title.trim(), done:false});
+    goal.progress = computeProgress(goal);
+    save(); toast("Task added");
+  }
+
+  function computeProgress(goal){
+    const total = goal.tasks.length;
+    if(total===0) return goal.progress||0;
+    const done = goal.tasks.filter(t=>t.done).length;
+    return Math.round(done/total*100);
+  }
+
+  /* ---------- Filters ---------- */
+  function readFilters(){
+    return {
+      q: $("#q").value.trim().toLowerCase(),
+      cat: $("#f-category").value,
+      pri: $("#f-priority").value,
+      status: $("#f-status").value,
+      sort: $("#f-sort").value
+    };
+  }
+  function applyFilters(items, f){
+    let out = items.slice();
+    if(f.q){
+      out = out.filter(g =>
+        g.title.toLowerCase().includes(f.q) ||
+        (g.desc||"").toLowerCase().includes(f.q) ||
+        g.tasks.some(t=>t.title.toLowerCase().includes(f.q))
+      );
+    }
+    if(f.cat) out = out.filter(g=>g.category===f.cat);
+    if(f.pri) out = out.filter(g=>g.priority===f.pri);
+    if(f.status) out = out.filter(g=>g.status===f.status);
+    // sort
+    out.sort((a,b)=>{
+      if(f.sort==="deadline") return (a.deadline||"9999") < (b.deadline||"9999") ? -1:1;
+      if(f.sort==="progress") return (b.progress||0) - (a.progress||0);
+      if(f.sort==="created") return a.createdAt - b.createdAt;
+      // priority
+      const rank = p => ({Critical:4, High:3, Medium:2, Low:1})[p]||0;
+      return rank(b.priority)-rank(a.priority);
+    });
+    return out;
+  }
+  const splitByStatus = (items) => ({
+    backlog: items.filter(g=>g.status==="backlog"),
+    doing  : items.filter(g=>g.status==="doing"),
+    done   : items.filter(g=>g.status==="done"),
+  });
+
+  /* ---------- Modal: Goal ---------- */
+  const goalModal = $("#goal-modal");
+  $("#btn-new").onclick = ()=> openGoalModal();
+  function openGoalModal(goal){
+    $("#modal-title").textContent = goal? "Edit Goal":"New Goal";
+    $("#g-title").value = goal?.title||"";
+    $("#g-category").value = goal?.category||"";
+    $("#g-priority").value = goal?.priority||"High";
+    $("#g-deadline").value = goal?.deadline||"";
+    $("#g-color").value = goal?.color||"#7c3aed";
+    $("#g-desc").value = goal?.desc||"";
+    $("#g-estimate").value = goal?.estimate??"";
+    goalModal.returnValue = "";
+    goalModal.showModal();
+    $("#save-goal").onclick = (e)=>{
+      e.preventDefault();
+      const data = {
+        title: $("#g-title").value.trim(),
+        category: $("#g-category").value.trim(),
+        priority: $("#g-priority").value,
+        deadline: $("#g-deadline").value || null,
+        color: $("#g-color").value,
+        desc: $("#g-desc").value.trim(),
+        estimate: $("#g-estimate").value? Number($("#g-estimate").value): null
+      };
+      if(!data.title){ toast("Title required"); return; }
+      if(goal){
+        Object.assign(goal, data);
+      } else {
+        STATE.goals.push({
+          id: uid(), ...data,
+          status: "backlog",
+          createdAt: Date.now(),
+          tasks: [],
+          progress: 0
+        });
+        unlock("FirstStep");
+      }
+      save(); goalModal.close(); toast("Saved");
+    };
+  }
+
+  /* ---------- SMART Wizard ---------- */
+  const smartModal = $("#smart-modal");
+  $("#btn-smart").onclick = ()=> smartModal.showModal();
+  $("#smart-create").onclick = (e)=>{
+    e.preventDefault();
+    const S = {
+      sp: $("#s-specific").value.trim(),
+      me: $("#s-measure").value.trim(),
+      ac: $("#s-ach").value.trim(),
+      re: $("#s-rel").value.trim(),
+      ti: $("#s-time").value,
+      ca: $("#s-cat").value.trim(),
+      at: $("#s-autotasks").value
+    };
+    if(!S.sp){ toast("Add something specific"); return; }
+    const title = S.sp;
+    const desc = `Specific: ${S.sp}\nMeasurable: ${S.me||"-"}\nAchievable: ${S.ac||"-"}\nRelevant: ${S.re||"-"}\nTime-bound: ${S.ti||"-"}`;
+    const goal = {
+      id: uid(),
+      title, category: S.ca||"General", priority: "High",
+      deadline: S.ti||null, color: pickColorFor(S.ca),
+      desc, estimate: null, status:"backlog",
+      createdAt: Date.now(), tasks:[], progress:0
+    };
+    if(S.at!=="none"){
+      goal.tasks = autoTasksFor(title, S.at);
+    }
+    STATE.goals.push(goal);
+    save();
+    smartModal.close();
+    toast("SMART goal created");
+    unlock("Smartie");
+  };
+  function autoTasksFor(title, mode){
+    const base = [
+      {title:`Define success for "${title}"`, done:false},
+      {title:`Plan next 3 steps`, done:false},
+      {title:`Do 1st step`, done:false},
+      {title:`Review & adjust`, done:false},
+    ];
+    if(mode==="coach"){
+      base.push({title:"Block calendar time", done:false});
+      base.push({title:"Set checkpoint reminder", done:false});
+      base.push({title:"Find an accountability buddy", done:false});
+    }
+    return base.map(t=> ({id:uid(), ...t}));
+  }
+
+  /* ---------- Achievements ---------- */
+  const BADGES = {
+    FirstStep: {icon:"fa-shoe-prints", name:"First Step", desc:"Created your first goal"},
+    OnTheMove: {icon:"fa-person-running", name:"On The Move", desc:"Started a goal"},
+    Closer: {icon:"fa-flag-checkered", name:"Closer", desc:"Completed a goal"},
+    Smartie: {icon:"fa-wand-magic-sparkles", name:"SMARTie", desc:"Used the SMART wizard"},
+    FiveTasks: {icon:"fa-list-check", name:"Task Tamer", desc:"Checked off 5 tasks"},
+    Streak3: {icon:"fa-fire", name:"Warm Up", desc:"3-day streak"},
+    Streak7: {icon:"fa-fire-flame-curved", name:"On Fire", desc:"7-day streak"}
+  };
+  function unlock(key){
+    const g = getMeta();
+    if(!g.badges) g.badges = {};
+    if(!g.badges[key]){ g.badges[key] = Date.now(); saveMeta(g); renderAchievements(); }
+  }
+  function getMeta(){
+    const m = JSON.parse(localStorage.getItem(KEY+".meta")||"{}");
+    return m;
+  }
+  function saveMeta(m){ localStorage.setItem(KEY+".meta", JSON.stringify(m)); }
+  function renderAchievements(){
+    const wrap = $("#achievements");
+    const m = getMeta();
+    wrap.innerHTML = Object.keys(BADGES).map(k=>{
+      const b = BADGES[k]; const unlocked = !!m.badges?.[k];
+      return `<div class="achievement ${unlocked?'':'locked'}" title="${b.desc}">
+        <i class="fa-solid ${b.icon}"></i> ${b.name}
+      </div>`;
+    }).join("");
+    // badges modal content
+    $("#badges-body").innerHTML = wrap.innerHTML;
+  }
+  $("#btn-badges").onclick = ()=> $("#badges-modal").showModal();
+
+  /* ---------- Streaks & Nudges ---------- */
+  function markStreak(){
+    const today = new Date().toISOString().slice(0,10);
+    if(STATE.streak.lastDay === today) return;
+    const yest = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    STATE.streak.count = (STATE.streak.lastDay===yest) ? STATE.streak.count+1 : 1;
+    STATE.streak.lastDay = today;
+    save();
+    if(STATE.streak.count>=3) unlock("Streak3");
+    if(STATE.streak.count>=7) unlock("Streak7");
+  }
+  function maybeNudge(){
+    const totalDone = STATE.goals.flatMap(g=>g.tasks).filter(t=>t.done).length;
+    const m = getMeta();
+    if(totalDone>=5) unlock("FiveTasks");
+    // gentle toast if nothing progressed in 48h
+    const last = m.lastNudge||0;
+    if(Date.now()-last > 1000*60*60*48){
+      m.lastNudge = Date.now();
+      saveMeta(m);
+      // don't be annoying; only if no doing goals
+      if(!STATE.goals.some(g=>g.status==="doing")) toast("🧠 Tip: Move one goal to In Progress to build momentum");
+    }
+  }
+
+  /* ---------- Stats ---------- */
+  function updateStats(){
+    const goals = STATE.goals;
+    $("#stat-goals").textContent = goals.length;
+    $("#rad-goals").style.width = clamp(goals.length? (goals.filter(g=>g.status!=="backlog").length/goals.length*100) : 0)+"%";
+    const tasksToday = goals
+      .flatMap(g=>g.tasks)
+      .filter(t=> t.done && (Date.now()- (t.__doneAt||0) < 86400000)).length;
+    $("#stat-today").textContent = tasksToday;
+    $("#rad-today").style.width = clamp(tasksToday*10,0,100)+"%";
+    const avg = Math.round(goals.reduce((a,g)=>a+(g.progress||0),0)/ (goals.length||1));
+    $("#stat-progress").textContent = avg+"%";
+    $("#rad-progress").style.width = avg+"%";
+    $("#stat-streak").textContent = (STATE.streak.count||0)+" 🔥";
+    $("#rad-streak").style.width = clamp((STATE.streak.count||0)*10,0,100)+"%";
+  }
+
+  /* ---------- Theme ---------- */
+  $("#btn-theme").onclick = ()=>{
+    const hues = [
+      {name:"Mint", v:"--accent:#6ee7b7;--accent-2:#14b8a6;--accent-3:#22d3ee;"},
+      {name:"Grape", v:"--accent:#a78bfa;--accent-2:#7c3aed;--accent-3:#e879f9;"},
+      {name:"Sunset", v:"--accent:#f59e0b;--accent-2:#ef4444;--accent-3:#f97316;"},
+      {name:"Ocean", v:"--accent:#60a5fa;--accent-2:#22d3ee;--accent-3:#34d399;"},
+    ];
+    const idx = Number(localStorage.getItem(KEY+".theme")||"0");
+    const next = (idx+1)%hues.length;
+    document.documentElement.style.cssText += hues[next].v;
+    localStorage.setItem(KEY+".theme", next);
+    toast("Theme: "+hues[next].name);
+  };
+
+  /* ---------- Keyboard ---------- */
+  addEventListener("keydown", (e)=>{
+    if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==="k"){ e.preventDefault(); $("#q").focus(); }
+  });
+
+  /* ---------- Buttons ---------- */
+  $("#btn-export").onclick = ()=>{
+    const blob = new Blob([JSON.stringify(STATE, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "goals-export.json";
+    a.click(); URL.revokeObjectURL(a.href);
+  };
+  $("#import-file").onchange = async (e)=>{
+    const file = e.target.files[0]; if(!file) return;
+    const text = await file.text();
+    try{
+      const data = JSON.parse(text);
+      if(!Array.isArray(data.goals)) throw new Error("Invalid file");
+      Object.assign(STATE, data);
+      save(); toast("Imported");
+    }catch(err){ alert("Import failed: "+err.message) }
+    e.target.value = "";
+  };
+  $("#clear-data").onclick = resetAll;
+  $("#reset-filters").onclick = ()=>{
+    $("#q").value=""; $("#f-category").value=""; $("#f-priority").value="";
+    $("#f-status").value=""; $("#f-sort").value="priority"; render();
+  };
+  $("#q, #f-category, #f-priority, #f-status, #f-sort").oninput = ()=> render();
+  $("#expand-all").onclick = ()=>{
+    STATE.compact = false; render();
+  };
+  $("#btn-compact").onclick = ()=>{
+    STATE.compact = !STATE.compact; render();
+  };
+
+  /* ---------- Helpers ---------- */
+  function pickColorFor(cat){
+    const map = {
+      "Fitness":"#10b981",
+      "Study":"#22d3ee",
+      "School":"#22d3ee",
+      "Money":"#f59e0b",
+      "Finance":"#f59e0b",
+      "Career":"#7c3aed"
+    };
+    return map[cat] || ["#7c3aed","#22d3ee","#6ee7b7","#f59e0b","#ef4444"][Math.floor(Math.random()*5)];
+  }
+  function mix(hex, a=0.3){
+    // returns rgba mix with background using alpha
+    const c = hex.replace("#",""); const r=parseInt(c.slice(0,2),16), g=parseInt(c.slice(2,4),16), b=parseInt(c.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  function escapeHtml(s){
+    return (s||"").replace(/[&<>"']/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+
+  /* ---------- Task done timestamp ---------- */
+  // Intercept checkbox changes to stamp __doneAt
+  addEventListener("change", (e)=>{
+    const cb = e.target;
+    if(cb.matches('input[type="checkbox"][data-act="toggleTask"]') && cb.checked){
+      const gid = cb.dataset.g, tid = cb.dataset.t;
+      const gg = STATE.goals.find(g=>g.id===gid); const tt = gg.tasks.find(t=>t.id===tid);
+      tt.__doneAt = Date.now();
+      save();
+    }
+  }, true);
+
+  /* ---------- Initial demo data (first run) ---------- */
+  function seedIfEmpty(){
+    if(STATE.goals.length) return;
+    const demo = [
+      {
+        id:uid(), title:"Launch personal site", category:"Career", priority:"High",
+        deadline:null, color:"#7c3aed", desc:"One-page portfolio + blog. Keep it clean.",
+        estimate:6, status:"backlog", createdAt:Date.now()-86400000*2, tasks:[
+          {id:uid(), title:"Pick theme & color", done:true, __doneAt: Date.now()-3600000*30},
+          {id:uid(), title:"Write about me", done:false},
+          {id:uid(), title:"Publish & share", done:false},
+        ], progress:33
+      },
+      {
+        id:uid(), title:"Run sub-22min 5k", category:"Fitness", priority:"Critical",
+        deadline:null, color:"#10b981", desc:"Tempo Tues, intervals Thu, long Sun.",
+        estimate:12, status:"doing", createdAt:Date.now()-86400000*6, tasks:[
+          {id:uid(), title:"2x10m tempo", done:true, __doneAt: Date.now()-3600000*25},
+          {id:uid(), title:"6x400m @ 4:15/km", done:false},
+          {id:uid(), title:"Long run 8km", done:false},
+        ], progress:33
+      },
+      {
+        id:uid(), title:"Ace the midterm", category:"Study", priority:"High",
+        deadline:null, color:"#22d3ee", desc:"Review notes + past papers.",
+        estimate:10, status:"backlog", createdAt:Date.now()-86400000, tasks:[
+          {id:uid(), title:"Outline topics", done:true, __doneAt:Date.now()-3600000*5},
+          {id:uid(), title:"Flashcards (50)", done:false},
+          {id:uid(), title:"Mock test", done:false},
+        ], progress:33
+      }
+    ];
+    STATE.goals = demo; save();
+  }
+
+  /* ---------- Kickoff ---------- */
+  load(); seedIfEmpty(); renderAchievements(); updateStats(); render();
+
+  // compact tweak on narrow screens
+  if(innerWidth<900){ STATE.compact = true; }
+
+})();
+</script>
+</body>
+</html>
