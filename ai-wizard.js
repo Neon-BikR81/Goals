@@ -1,6 +1,16 @@
 // ai-wizard.js
 
-// Function to fetch AI suggestions for a goal
+// --------------------
+// 1. Auto-detect wizard fields
+// --------------------
+let goalInput = document.querySelector('input[placeholder*="goal"]') || document.getElementById('goal-title-input');
+let categoryElem = document.querySelector('input[placeholder*="category"]') || document.getElementById('wizard-category');
+let deadlineElem = document.querySelector('input[placeholder*="deadline"]') || document.getElementById('wizard-deadline');
+let subtasksContainer = document.querySelector('ul[placeholder*="subtasks"]') || document.getElementById('wizard-subtasks');
+
+// --------------------
+// 2. Function to call OpenAI API
+// --------------------
 async function generateGoalSuggestions(goalText) {
   if (!goalText) return null;
 
@@ -49,24 +59,21 @@ User goal: "${goalText}"
   }
 }
 
-// Example function to populate your Smart Wizard
+// --------------------
+// 3. Populate Smart Wizard fields
+// --------------------
 async function populateWizardWithAI(goalText) {
+  if (!goalText || !goalInput) return;
+
   const suggestions = await generateGoalSuggestions(goalText);
   if (!suggestions) return;
 
-  // Set category
-  const categoryElem = document.getElementById("wizard-category");
   if (categoryElem) categoryElem.value = suggestions.category || "";
-
-  // Set deadline
-  const deadlineElem = document.getElementById("wizard-deadline");
   if (deadlineElem) deadlineElem.value = suggestions.deadline || "";
 
-  // Populate subtasks
-  const subtasksContainer = document.getElementById("wizard-subtasks");
   if (subtasksContainer && suggestions.subtasks) {
-    subtasksContainer.innerHTML = ""; // Clear previous
-    suggestions.subtasks.forEach((task, index) => {
+    subtasksContainer.innerHTML = "";
+    suggestions.subtasks.forEach(task => {
       const li = document.createElement("li");
       li.textContent = task;
       subtasksContainer.appendChild(li);
@@ -74,8 +81,9 @@ async function populateWizardWithAI(goalText) {
   }
 }
 
-// Example: attach to goal input blur
-const goalInput = document.getElementById("goal-title-input");
+// --------------------
+// 4. Event listener to trigger AI suggestions
+// --------------------
 if (goalInput) {
   goalInput.addEventListener("blur", () => {
     const goalText = goalInput.value;
